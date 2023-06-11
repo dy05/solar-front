@@ -113,43 +113,26 @@
 </template>
 
 <script>
-import axios from "axios";
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   data() {
     return {
-      baseURL: 'http://localhost:8000/api',
-      users: [],
       message: null,
     }
   },
+  computed: {
+    ...mapGetters(['users'])
+  },
+  methods: {
+    ...mapActions(['fetchAllUsers'])
+  },
   mounted() {
-    axios.post(this.baseURL + '/auth/login', {
-      email: 'admin@admin.com',
-      password: 'password'
-    }).then((response) => {
-      console.log('response 1')
-      console.log(response)
-      const token = response.data?.token
-      if (token) {
-        axios.get(this.baseURL + '/users', {
-          headers: {
-            Authorization: 'Bearer ' + token
-          }
-        })
-            .then((response) => {
-              console.log('response 2')
-              console.log(response)
-              if (response.data?.users) {
-                this.users = response.data.users;
-              }
-            })
-      } else {
-        alert('Error token: ' + response.data.toString())
-      }
-    }).catch((error) => {
-      alert('Error message: ' + error.data?.toString())
-    })
+    this.fetchAllUsers().then((data) => {
+      console.log('data on');
+      console.log(data);
+      console.log(this.users)
+    });
   }
 }
 </script>

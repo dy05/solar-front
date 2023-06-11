@@ -49,11 +49,16 @@
 
             <div class="mt-16 flex">
               <button class="bg-indigo-500 hover:bg-indigo-900 text-white px-16 py-4 rounded-3xl uppercase font-bold
-                mx-auto" type="submit">
-                Connexion
+                mx-auto" type="submit" :disabled="loading">
+                Connexion {{ loading ? '...' : '' }}
               </button>
             </div>
           </form>
+          <div class="mt-5 flex">
+            <RouterLink to="register" class="mx-auto text-gray-400 font-bold">
+              Register
+            </RouterLink>
+          </div>
         </div>
       </div>
       <div class="mt-16 flex float-right">
@@ -72,18 +77,42 @@
 </style>
 
 <script>
+import axios from 'axios';
+import fetchApi from '@/utils/axios';
+
 export default {
   data() {
     return {
       error: null,
+      loading: false,
       email: 'admin@admin.com',
       password: 'password',
     }
   },
+  mounted() {
+    axios.get('/user').then()
+    fetchApi.get('/user').then()
+  },
   methods: {
     submit(e) {
+      this.error = null;
+      this.loading = true;
       e.preventDefault();
-      this.error = 'Password incorrect';
+
+      axios.post('/auth/login', {
+        email: this.email,
+        password: this.password
+      }).then((response) => {
+        console.log('response 1')
+        console.log(response)
+        const token = response.data?.token
+        if (token) {
+        }
+      }).catch((error) => {
+        this.error = error.response?.data?.message;
+      }).finally(() => {
+        this.loading = true;
+      })
     }
   }
 }
