@@ -121,10 +121,9 @@ const router = createRouter({
           },
         ],
       },
+      { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView, alias: '/404' },
     ],
-  },
-  { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView, alias: '/404' },
-])
+})
 
 router.beforeEach((to, from, next) => {
   let middleware = to.meta?.middleware;
