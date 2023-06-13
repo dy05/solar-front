@@ -1,5 +1,5 @@
 <template>
-  <div class="font-sans xl:px-32 py-2 xl:pb-5 flex justify-center">
+  <div class="font-sans px-4 xl:px-32 py-2 xl:pb-5 flex justify-center">
     <div class="w-full md:w-6/12 md:p-5">
       <h1 class="text-4xl mx-auto leading-tight font-bold text-gray-500 mb-4">
         Welcome to Solar PV
@@ -77,11 +77,8 @@
   </div>
 </template>
 
-<style>
-</style>
-
 <script>
-import axios from '@/utils/axios';
+import { mapActions } from 'vuex';
 
 export default {
   data() {
@@ -92,13 +89,15 @@ export default {
       name: 'test',
       email: 'test@test.com',
       password: 'password',
-      password_confirmation: 'passwor',
+      password_confirmation: 'password',
     }
   },
   methods: {
+    ...mapActions('users', ['register']),
     submit(e) {
       e.preventDefault();
       this.errors = null;
+
       if (this.password !== this.password_confirmation) {
         this.errors = this.errors ?? {}
         this.errors.password = ['Password not matched']
@@ -107,21 +106,13 @@ export default {
       if (! this.errors) {
         this.loading = true;
 
-        axios.post('/auth/register', {
+        this.register({
           name: this.name,
           email: this.email,
           password: this.password,
           password_confirmation: this.password_confirmation,
-        }).then((response) => {
-          const data = response.data
-          if (data?.token) {
-            localStorage.setItem('authToken', data.token)
-            localStorage.setItem('authUser', JSON.stringify(data.user))
-            window.location.href = '/'
-          }
         }).catch((error) => {
-          this.errors = this.errors ?? {}
-          this.errors = error.response?.data?.errors;
+          this.errors = error.data?.errors;
         }).finally(() => {
           this.loading = false;
         })

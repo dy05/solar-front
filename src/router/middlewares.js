@@ -1,8 +1,8 @@
-export function guest({next, store}){
-  let authToken = localStorage.getItem('authToken');
-  // let isLoggedIn = false
-  // let isLoggedIn = false
-  if(authToken) {
+import store from '../store';
+
+export function guest({next}){
+  const token = store.getters['users/token'];
+  if(token) {
     return next({
       name: 'dashboard'
     })
@@ -11,10 +11,9 @@ export function guest({next, store}){
   return next();
 }
 
-export function auth({next, store}){
-  let isLoggedIn = false // Can be calculated through store
-  // let isLoggedIn = store.getters['sessionData/isLoggedIn']
-  if(! isLoggedIn) {
+export function auth({next}){
+  const token = store.getters['users/token'];
+  if(! token) {
     return next({
       name: 'login'
     })
@@ -26,7 +25,7 @@ export function auth({next, store}){
 export function middlewarePipeline (context, middleware, index) {
   const nextMiddleware = middleware[index]
 
-  if(!nextMiddleware){
+  if(! nextMiddleware){
     return context.next
   }
 

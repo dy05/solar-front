@@ -1,6 +1,5 @@
 import Axios from 'axios';
-
-// import data from "./store/data";
+import store from '../store';
 
 let axios = Axios.create({
   headers: {
@@ -15,7 +14,7 @@ let axios = Axios.create({
 
 axios.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('authToken');
+    const token = store.getters['users/token'];
 
     if (token && config?.headers) {
       config.headers['Authorization'] = `Bearer ${token}`;
